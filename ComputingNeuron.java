@@ -33,7 +33,9 @@ public class ComputingNeuron implements Neuron{
 	}
 
 
-
+	public void feedInput(float in){
+		value=in;
+	}
 
 	public float getValue(){
 		return value;
