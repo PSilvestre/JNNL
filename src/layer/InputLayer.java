@@ -7,6 +7,9 @@ import connection.Connection;
 import connection.NeuronConnection;
 import exception.NoInputConnectionsException;
 import exception.NoInputInInputLayerException;
+import exception.NotHiddenLayerException;
+import exception.NotOutputNeuronException;
+import exception.OutputNeuronException;
 import exception.WrongSizeInInputLayerException;
 import neurons.InputNeuron;
 import neurons.Neuron;
@@ -65,6 +68,18 @@ public class InputLayer implements Layer {
 		for(Neuron n : neurons)
 			neuronsTemp.add(n);
 		return neuronsTemp;
+	}
+
+	@Override
+	public void backProp(List<Float> guesses, List<Float> answers) throws NotOutputNeuronException {
+		throw new NotOutputNeuronException();
+	}
+
+	@Override
+	public void backProp() throws OutputNeuronException, NotHiddenLayerException {
+		for(Neuron n : neurons)
+			n.backProp();
+		
 	}
 
 }

@@ -4,6 +4,8 @@ import java.util.List;
 
 import connection.Connection;
 import exception.NoInputConnectionsException;
+import exception.NotOutputNeuronException;
+import exception.OutputNeuronException;
 import functions.ActivationFunction;
 import functions.SummingFunction;
 
@@ -13,7 +15,7 @@ public class ComputingNeuron implements Neuron{
 	
 	private float output;
 	private float sumOfInputs;
-	
+	private float delta;
 	private List<Connection> inputs;
 	private List<Connection> outputs;
 	
@@ -85,5 +87,32 @@ public class ComputingNeuron implements Neuron{
 	public void addOutputConnection(Connection c) {
 		outputs.add(c);
 	}
+
+	@Override
+	public void backProp(float guess, float answer) throws NotOutputNeuronException {
+		this.setDelta(af.applyDeriv(this.sumOfInputs)* guess - this.output);
+		for(Connection c : inputs)
+			c.setWeight((float) (c.getWeight() + 0.2 * this.output * delta));
+	}
+
+	@Override
+	public void backProp() throws OutputNeuronException {
+		float sumOfWeightedDeltas = 0;
+		for(Connection c : outputs)
+			sumOfWeightedDeltas += c.getReceiverNeuron().getDelta()*c.getWeight();
+		this.setDelta(af.applyDeriv(sumOfInputs)*sumOfWeightedDeltas);
+		for(Connection c : inputs)
+			c.setWeight((float) (c.getWeight() + 0.2 * this.output * delta));
+	}
+
+	public float getDelta() {
+		return delta;
+	}
+
+	public void setDelta(float delta) {
+		this.delta = delta;
+	}
+
+
 
 }

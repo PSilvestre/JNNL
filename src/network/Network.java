@@ -5,7 +5,10 @@ import java.util.List;
 
 import exception.NoInputConnectionsException;
 import exception.NoInputInInputLayerException;
+import exception.NotHiddenLayerException;
 import exception.NotInputLayerException;
+import exception.NotOutputNeuronException;
+import exception.OutputNeuronException;
 import exception.WrongSizeInInputLayerException;
 import layer.HiddenLayer;
 import layer.InputLayer;
@@ -53,5 +56,13 @@ public class Network {
 	
 	public Layer getLayer(int layerNum) {
 		return layers.get(layerNum);
+	}
+	
+	public void BackProp(List<Float> guesses, List<Float> answers) throws NotOutputNeuronException, OutputNeuronException, NotHiddenLayerException {
+		layers.get(layers.size()-1).backProp(guesses, answers);
+		for(int i = layers.size()-2; i > 0; i--) {
+			layers.get(i).backProp();
+		}
+		
 	}
 }

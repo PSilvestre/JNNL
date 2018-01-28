@@ -7,6 +7,9 @@ import exception.NoActivationFunctionException;
 import exception.NoInputConnectionsException;
 import exception.NoSumOfInputsException;
 import exception.NoSummingFunctionException;
+import exception.NotHiddenLayerException;
+import exception.NotOutputNeuronException;
+import exception.OutputNeuronException;
 import functions.ActivationFunction;
 import functions.SummingFunction;
 
@@ -14,6 +17,7 @@ public class SimpleInputNeuron implements InputNeuron{
 
 	private float value;
 	List<Connection> outputs;
+	float delta;
 	public SimpleInputNeuron() {
 		outputs = new LinkedList<Connection>();
 		value = 0;
@@ -78,5 +82,22 @@ public class SimpleInputNeuron implements InputNeuron{
 	public List<Connection> getOutputs() {
 		return outputs;
 	}
+
+	@Override
+	public void backProp(float guess, float answer) throws NotOutputNeuronException {
+		throw new NotOutputNeuronException();
+	}
+
+	@Override
+	public void backProp() throws OutputNeuronException, NotHiddenLayerException {
+		throw new NotHiddenLayerException();
+	}
+
+	@Override
+	public float getDelta() {
+		return delta;
+	}
+
+
 
 }

@@ -1,6 +1,5 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -8,6 +7,9 @@ import java.util.StringTokenizer;
 
 import connection.Connection;
 import exception.NoInputConnectionsException;
+import exception.NotHiddenLayerException;
+import exception.NotOutputNeuronException;
+import exception.OutputNeuronException;
 import layer.Layer;
 import network.Network;
 import neurons.Neuron;
@@ -49,32 +51,29 @@ public class Main {
 		}
 	}
 
-	private static void trainNet(List<Integer> numNeurons, Scanner s) {
-		float[] inputs = new float[numNeurons.get(0)];
-		//System.out.println(numNeurons.get(0));
-		//System.out.println(numNeurons.get(numNeurons.size()-1));
-		float[] outputs = new float[numNeurons.get(numNeurons.size()-1)];
-		while(s.hasNextLine()) {
-			String r = s.nextLine();
-			StringTokenizer st = new StringTokenizer(r);
-			int i = 0;
-			while(st.hasMoreTokens()) {
-				String token = st.nextToken();
-				inputs[i++] = (Float.parseFloat(token));
-			}
-			r = s.nextLine();
-			st = new StringTokenizer(r);
-			i = 0;
-			while(st.hasMoreTokens()) {
-				String token = st.nextToken();
-				outputs[i++] =(Float.parseFloat(token));
-				
-			}
-			s.nextLine();
-			System.out.println("hi");
-			//n.trainNet(inputs, outputs, 0.2f);
-			s.close();
+	private static void trainNet(Network n, Scanner sc) {
+		int numInputs = n.getSizeOfLayer(0);
+		List<Float> inputs = new LinkedList<Float>();
+		System.out.println("Enter inputs - " + numInputs + " floats: ");
+		for (int i = 0; i < numInputs; i++) {
+			inputs.add(sc.nextFloat());
 		}
+		List<Float> outs = n.compute(inputs);
+		List<Float> answers = new LinkedList<Float>();
+		int numOutputs = n.getSizeOfLayer(n.numberOfLayers()-1);
+		System.out.println("Enter correct outputs - " + numOutputs + " floats: ");
+		for (int i = 0; i < numOutputs ; i++) {
+			answers.add(sc.nextFloat());
+		}
+		try {
+			n.BackProp(outs, answers);
+			System.out.println("Training successful.");
+		} catch (NotOutputNeuronException | OutputNeuronException | NotHiddenLayerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 
 	private static void console(Network n) {
@@ -96,7 +95,7 @@ public class Main {
 				showNetStructure(n);
 				break;
 			case "T":
-				trainNet(null, sc);
+				trainNet(n,sc);
 				break;
 			case "Q":
 				running = false;

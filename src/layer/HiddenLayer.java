@@ -8,7 +8,10 @@ import connection.Connection;
 import connection.NeuronConnection;
 import exception.NoInputConnectionsException;
 import exception.NoInputInInputLayerException;
+import exception.NotHiddenLayerException;
 import exception.NotInputLayerException;
+import exception.NotOutputNeuronException;
+import exception.OutputNeuronException;
 import exception.WrongSizeInInputLayerException;
 import functions.ActivationFunction;
 import functions.SummingFunction;
@@ -66,6 +69,18 @@ public class HiddenLayer implements Layer {
 	@Override
 	public List<Neuron> getNeurons() {
 		return neurons;
+	}
+
+	@Override
+	public void backProp(List<Float> guesses, List<Float> answers) throws NotOutputNeuronException {
+		throw new NotOutputNeuronException();
+	}
+
+	@Override
+	public void backProp() throws OutputNeuronException, NotHiddenLayerException {
+		for(Neuron n : neurons)
+			n.backProp();
+		
 	}
 
 }

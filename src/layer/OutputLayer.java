@@ -9,6 +9,8 @@ import connection.NeuronConnection;
 import exception.NoInputConnectionsException;
 import exception.NoInputInInputLayerException;
 import exception.NotInputLayerException;
+import exception.NotOutputNeuronException;
+import exception.OutputNeuronException;
 import exception.WrongSizeInInputLayerException;
 import functions.ActivationFunction;
 import functions.SummingFunction;
@@ -62,6 +64,18 @@ public class OutputLayer implements Layer {
 	@Override
 	public List<Neuron> getNeurons() {
 		return neurons;
+	}
+
+	@Override
+	public void backProp(List<Float> guesses, List<Float> answers) throws NotOutputNeuronException {
+		for(int i = 0; i < guesses.size(); i++)
+			neurons.get(i).backProp(guesses.get(i), answers.get(i));
+			
+	}
+
+	@Override
+	public void backProp() throws OutputNeuronException {
+		throw new OutputNeuronException();
 	}
 
 }

@@ -7,6 +7,7 @@ import exception.NoActivationFunctionException;
 import exception.NoInputConnectionsException;
 import exception.NoSumOfInputsException;
 import exception.NoSummingFunctionException;
+import exception.NotOutputNeuronException;
 import functions.ActivationFunction;
 import functions.SummingFunction;
 
@@ -79,6 +80,23 @@ public class BiasNeuron implements Neuron{
 	@Override
 	public List<Connection> getOutputs() {
 		return outputs;
+	}
+
+	@Override
+	public void backProp(float guess, float answer) throws NotOutputNeuronException {
+		throw new NotOutputNeuronException();
+	}
+
+	@Override
+	public void backProp() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public float getDelta() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

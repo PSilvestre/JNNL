@@ -6,6 +6,9 @@ import exception.NoActivationFunctionException;
 import exception.NoInputConnectionsException;
 import exception.NoSumOfInputsException;
 import exception.NoSummingFunctionException;
+import exception.NotHiddenLayerException;
+import exception.NotOutputNeuronException;
+import exception.OutputNeuronException;
 import functions.ActivationFunction;
 import functions.SummingFunction;
 
@@ -27,4 +30,9 @@ public interface Neuron {
 	List<Connection> getInputs() throws NoInputConnectionsException;
 	
 	List<Connection> getOutputs();
+	
+	void backProp(float guess, float answer) throws NotOutputNeuronException;
+	void backProp() throws OutputNeuronException, NotHiddenLayerException;
+	float getDelta();
+
 }

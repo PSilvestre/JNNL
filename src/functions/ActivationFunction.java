@@ -18,5 +18,8 @@ public enum ActivationFunction {
 		return 0;
 	}
 	
-	
+	public float applyDeriv(float value) {
+		System.out.println("using default af");
+		return 0;
+	}
 }
