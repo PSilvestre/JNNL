@@ -4,22 +4,20 @@ A simple Neural Network library I'm working on for fun.
 
 <b>Features:</b>
 
-  +Sigmoid activation function.
+  +Sigmoid, Tanh and Rectifier (ReLU) activation functions.
 
   +Weighted summing function.
 
   +Bias neuron on all hidden layers.
 
+  +Backpropagation.
+
 
 <b>To-do:</b>
-
-  +Back-Prop
   
   +Visualization
   
-  +More activation and summing functions.
-  
-  +Loading networks from files.
+  +Loading and storing networks from files.
   
   +Training from files.
   
