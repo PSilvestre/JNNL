@@ -15,7 +15,7 @@ public enum SummingFunction {
 	};
 
 	public float apply(List<Connection> inputConnections) {
-		
+		System.out.println("NEVER CALL THIS");
 		return 0.0f;
 	}
 }

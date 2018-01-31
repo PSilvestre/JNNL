@@ -22,7 +22,7 @@ public class BiasNeuron implements Neuron{
 	}
 	
 	public BiasNeuron() {
-		this.value = (float) (Math.random()*2 -1);
+		this.value = 1;//(float) (Math.random()*2 -1);
 		outputs = new LinkedList<Connection>();
 	}
 	
@@ -89,14 +89,20 @@ public class BiasNeuron implements Neuron{
 
 	@Override
 	public void backProp() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public float getDelta() {
-		// TODO Auto-generated method stub
+		
+		System.out.println("THIS SHOULDNT HAVE BEEN CALLED");
 		return 0;
+	}
+
+	@Override
+	public void updateWeights(float learningRate) {
+		for(Connection c : outputs)
+			c.setWeight((float) (c.getWeight() + learningRate * this.value * c.getReceiverNeuron().getDelta()));
 	}
 
 }

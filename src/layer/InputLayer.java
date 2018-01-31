@@ -82,4 +82,10 @@ public class InputLayer implements Layer {
 		
 	}
 
+	@Override
+	public void updateWeights(float learningRate) {
+		for(Neuron n : neurons)
+			n.updateWeights(learningRate);
+	}
+
 }

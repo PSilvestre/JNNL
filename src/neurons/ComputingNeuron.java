@@ -90,9 +90,7 @@ public class ComputingNeuron implements Neuron{
 
 	@Override
 	public void backProp(float guess, float answer) throws NotOutputNeuronException {
-		this.setDelta(af.applyDeriv(this.sumOfInputs)* guess - this.output);
-		for(Connection c : inputs)
-			c.setWeight((float) (c.getWeight() + 0.2 * this.output * delta));
+		this.setDelta(af.applyDeriv(this.sumOfInputs)* (answer - guess));
 	}
 
 	@Override
@@ -101,8 +99,7 @@ public class ComputingNeuron implements Neuron{
 		for(Connection c : outputs)
 			sumOfWeightedDeltas += c.getReceiverNeuron().getDelta()*c.getWeight();
 		this.setDelta(af.applyDeriv(sumOfInputs)*sumOfWeightedDeltas);
-		for(Connection c : inputs)
-			c.setWeight((float) (c.getWeight() + 0.2 * this.output * delta));
+		
 	}
 
 	public float getDelta() {
@@ -111,6 +108,12 @@ public class ComputingNeuron implements Neuron{
 
 	public void setDelta(float delta) {
 		this.delta = delta;
+	}
+
+	@Override
+	public void updateWeights(float learningRate) {
+		for(Connection c : outputs)
+			c.setWeight((float) (c.getWeight() + learningRate * this.output * c.getReceiverNeuron().getDelta()));
 	}
 
 

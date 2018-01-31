@@ -90,12 +90,19 @@ public class SimpleInputNeuron implements InputNeuron{
 
 	@Override
 	public void backProp() throws OutputNeuronException, NotHiddenLayerException {
-		throw new NotHiddenLayerException();
 	}
-
 	@Override
 	public float getDelta() {
 		return delta;
+	}
+
+	@Override
+	public void updateWeights(float learningRate) {
+		for(Connection c : outputs) {
+			c.setWeight((float) (c.getWeight() + learningRate * this.value * c.getReceiverNeuron().getDelta()));
+		
+		
+		}
 	}
 
 

@@ -3,6 +3,7 @@ package network;
 import java.util.LinkedList;
 import java.util.List;
 
+import exception.GuessAnswerSizeMismatchException;
 import exception.NoInputConnectionsException;
 import exception.NoInputInInputLayerException;
 import exception.NotHiddenLayerException;
@@ -58,10 +59,14 @@ public class Network {
 		return layers.get(layerNum);
 	}
 	
-	public void BackProp(List<Float> guesses, List<Float> answers) throws NotOutputNeuronException, OutputNeuronException, NotHiddenLayerException {
+	public void BackProp(List<Float> guesses, List<Float> answers) throws NotOutputNeuronException, OutputNeuronException, NotHiddenLayerException, GuessAnswerSizeMismatchException {
+		if(guesses.size() != answers.size()) throw new GuessAnswerSizeMismatchException();
 		layers.get(layers.size()-1).backProp(guesses, answers);
-		for(int i = layers.size()-2; i > 0; i--) {
+		for(int i = layers.size()-2; i >= 0; i--) {
 			layers.get(i).backProp();
+		}
+		for(int i = layers.size()-2; i >= 0; i--) {
+			layers.get(i).updateWeights(0.2f);
 		}
 		
 	}

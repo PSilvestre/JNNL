@@ -80,7 +80,15 @@ public class HiddenLayer implements Layer {
 	public void backProp() throws OutputNeuronException, NotHiddenLayerException {
 		for(Neuron n : neurons)
 			n.backProp();
+		bias.backProp();
 		
+	}
+
+	@Override
+	public void updateWeights(float learningRate) {
+		for(Neuron n : neurons)
+			n.updateWeights(learningRate);
+		bias.updateWeights(learningRate);
 	}
 
 }

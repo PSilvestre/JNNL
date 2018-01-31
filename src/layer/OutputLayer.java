@@ -78,4 +78,9 @@ public class OutputLayer implements Layer {
 		throw new OutputNeuronException();
 	}
 
+	@Override
+	public void updateWeights(float learningRate)throws OutputNeuronException {
+		throw new OutputNeuronException();
+	}
+
 }

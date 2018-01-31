@@ -6,6 +6,7 @@ import java.util.Scanner;
 import java.util.StringTokenizer;
 
 import connection.Connection;
+import exception.GuessAnswerSizeMismatchException;
 import exception.NoInputConnectionsException;
 import exception.NotHiddenLayerException;
 import exception.NotOutputNeuronException;
@@ -68,7 +69,7 @@ public class Main {
 		try {
 			n.BackProp(outs, answers);
 			System.out.println("Training successful.");
-		} catch (NotOutputNeuronException | OutputNeuronException | NotHiddenLayerException e) {
+		} catch (NotOutputNeuronException | OutputNeuronException | NotHiddenLayerException | GuessAnswerSizeMismatchException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -97,6 +98,9 @@ public class Main {
 			case "T":
 				trainNet(n,sc);
 				break;
+			case "A":
+				autoTrain(n, sc);
+				break;
 			case "Q":
 				running = false;
 				break;
@@ -108,6 +112,32 @@ public class Main {
 			
 		}
 		sc.close();
+	}
+
+	private static void autoTrain(Network n, Scanner sc) {
+		int numInputs = n.getSizeOfLayer(0);
+		List<Float> inputs = new LinkedList<Float>();
+		System.out.println("Enter inputs - " + numInputs + " floats: ");
+		for (int i = 0; i < numInputs; i++) {
+			inputs.add(sc.nextFloat());
+		}
+		List<Float> outs = n.compute(inputs);
+		List<Float> answers = new LinkedList<Float>();
+		int numOutputs = n.getSizeOfLayer(n.numberOfLayers()-1);
+		System.out.println("Enter correct outputs - " + numOutputs + " floats: ");
+		for (int i = 0; i < numOutputs ; i++) {
+			answers.add(sc.nextFloat());
+		}
+		try {
+			for(int i = 0; i < 100 ; i++) {
+				outs = n.compute(inputs);
+				n.BackProp(outs, answers);
+			}
+			System.out.println("Training successful.");
+		} catch (NotOutputNeuronException | OutputNeuronException | NotHiddenLayerException | GuessAnswerSizeMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private static Network makeNetwork(Scanner sc) {
@@ -169,6 +199,7 @@ public class Main {
 		System.out.println("P - Predict on inputs");
 		System.out.println("S - Show Network Architecture");
 		System.out.println("T - Train net");
+		System.out.println("A - auto");
 		System.out.println("Q - Quit");
 	}
 }
