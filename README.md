@@ -11,13 +11,15 @@ A simple Neural Network library I'm working on for fun.
   +Bias neuron on all hidden layers.
 
   +Backpropagation.
-
-
-<b>To-do:</b>
-  
-  +Visualization
   
   +Loading and storing networks from files.
   
   +Training from files.
+
+
+<b>To-do:</b>
+  
+  +Visualization.
+  
+  
   
