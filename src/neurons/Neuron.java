@@ -31,8 +31,6 @@ public interface Neuron {
 	
 	List<Connection> getOutputs();
 	
-	void backProp(float guess, float answer) throws NotOutputNeuronException;
-	void backProp() throws OutputNeuronException, NotHiddenLayerException;
 	float getDelta();
-	void updateWeights(float learningRate);
+	void setDelta(float delta);
 }

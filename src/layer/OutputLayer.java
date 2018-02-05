@@ -1,5 +1,6 @@
 package layer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,14 +21,18 @@ import neurons.InputNeuron;
 import neurons.Neuron;
 import neurons.SimpleInputNeuron;
 
-public class OutputLayer implements Layer {
+public class OutputLayer implements Layer, Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 13L;
 	private List<Neuron> neurons;
 	
 	public OutputLayer(int numberOfNeurons) {
 		neurons = new LinkedList<Neuron>();
 		for(int i = 0; i < numberOfNeurons; i++)
-			neurons.add(new ComputingNeuron(ActivationFunction.SIGMOID, SummingFunction.WEIGHTED));
+			neurons.add(new ComputingNeuron(ActivationFunction.TANH, SummingFunction.WEIGHTED));
 	}
 	
 	@Override
@@ -67,20 +72,8 @@ public class OutputLayer implements Layer {
 	}
 
 	@Override
-	public void backProp(List<Float> guesses, List<Float> answers) throws NotOutputNeuronException {
-		for(int i = 0; i < guesses.size(); i++)
-			neurons.get(i).backProp(guesses.get(i), answers.get(i));
-			
-	}
-
-	@Override
-	public void backProp() throws OutputNeuronException {
-		throw new OutputNeuronException();
-	}
-
-	@Override
-	public void updateWeights(float learningRate)throws OutputNeuronException {
-		throw new OutputNeuronException();
+	public int size() {
+		return neurons.size();
 	}
 
 }

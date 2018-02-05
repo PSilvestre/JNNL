@@ -3,7 +3,7 @@ package functions;
 public enum ActivationFunction {
 	SIGMOID {
 		public float apply(float sumOfInputs) {
-			return 1 / ((float) (1 + Math.pow(Math.E, -sumOfInputs)));
+			return 1.0f / ((float) (1.0f + Math.pow(Math.E, -sumOfInputs)));
 		}
 
 		public float applyDeriv(float value) {

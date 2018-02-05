@@ -5,14 +5,24 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
+import Data.Dataset;
+import Data.DatasetLoaderSaver;
+import Data.SimpleDataset;
+import Data.SimpleTrainingSample;
+import Data.TrainingSample;
+import Learning.Backpropagation;
 import connection.Connection;
+import exception.DatasetSizeDifferentFromNetException;
 import exception.GuessAnswerSizeMismatchException;
 import exception.NoInputConnectionsException;
 import exception.NotHiddenLayerException;
 import exception.NotOutputNeuronException;
 import exception.OutputNeuronException;
+import exception.TrainingSampleSizeMismatchException;
 import layer.Layer;
+import network.MultilayerFeedForwardNetwork;
 import network.Network;
+import network.NetworkLoaderSaver;
 import neurons.Neuron;
 
 public class Main {
@@ -24,58 +34,11 @@ public class Main {
 	public static void main(String[] args) {
 		Network n = null;
 		if (args.length == 1) {
-			try {
-				Scanner s = new Scanner(new File(args[0]));
-				int numLayers = s.nextInt();
-				List<Integer> numNeurons = new LinkedList<Integer>();
-				for (int i = 0; i < numLayers; i++) {
-					numNeurons.add(s.nextInt());
-				}
-				int[] neuronsPerLayer = new int[numNeurons.size()];
-
-				for (int i = 0; i < numNeurons.size(); i++) {
-					neuronsPerLayer[i] = numNeurons.get(i);
-				}
-				s.nextLine();
-				s.nextLine();
-				try {
-					n = new Network(neuronsPerLayer);
-				} catch (NoInputConnectionsException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				//trainNet(numNeurons, s);
-				console(n);
-			} catch (FileNotFoundException e) {
-				System.out.println("File not found");
-			}
+			n = NetworkLoaderSaver.loadNetwork(args[0]);
 		}
+		console(n);
 	}
 
-	private static void trainNet(Network n, Scanner sc) {
-		int numInputs = n.getSizeOfLayer(0);
-		List<Float> inputs = new LinkedList<Float>();
-		System.out.println("Enter inputs - " + numInputs + " floats: ");
-		for (int i = 0; i < numInputs; i++) {
-			inputs.add(sc.nextFloat());
-		}
-		List<Float> outs = n.compute(inputs);
-		List<Float> answers = new LinkedList<Float>();
-		int numOutputs = n.getSizeOfLayer(n.numberOfLayers()-1);
-		System.out.println("Enter correct outputs - " + numOutputs + " floats: ");
-		for (int i = 0; i < numOutputs ; i++) {
-			answers.add(sc.nextFloat());
-		}
-		try {
-			n.BackProp(outs, answers);
-			System.out.println("Training successful.");
-		} catch (NotOutputNeuronException | OutputNeuronException | NotHiddenLayerException | GuessAnswerSizeMismatchException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-	}
 
 	private static void console(Network n) {
 		String command = "";
@@ -95,11 +58,20 @@ public class Main {
 			case "S":
 				showNetStructure(n);
 				break;
-			case "T":
-				trainNet(n,sc);
+			case "L":
+				n = handleLoad(sc);
 				break;
-			case "A":
-				autoTrain(n, sc);
+			case "ST":
+				handleSaveNet(n, sc);
+				break;
+			case "TDS":
+				handleTrainFromDataset(n, sc);
+				break;
+			case "TDSR":
+				handleTrainFromDatasetReadable(n, sc);
+				break;
+			case "MDS":
+				handleMakeDataset(sc);
 				break;
 			case "Q":
 				running = false;
@@ -114,30 +86,85 @@ public class Main {
 		sc.close();
 	}
 
-	private static void autoTrain(Network n, Scanner sc) {
-		int numInputs = n.getSizeOfLayer(0);
-		List<Float> inputs = new LinkedList<Float>();
-		System.out.println("Enter inputs - " + numInputs + " floats: ");
-		for (int i = 0; i < numInputs; i++) {
-			inputs.add(sc.nextFloat());
-		}
-		List<Float> outs = n.compute(inputs);
-		List<Float> answers = new LinkedList<Float>();
-		int numOutputs = n.getSizeOfLayer(n.numberOfLayers()-1);
-		System.out.println("Enter correct outputs - " + numOutputs + " floats: ");
-		for (int i = 0; i < numOutputs ; i++) {
-			answers.add(sc.nextFloat());
-		}
-		try {
-			for(int i = 0; i < 100 ; i++) {
-				outs = n.compute(inputs);
-				n.BackProp(outs, answers);
+	private static void handleMakeDataset(Scanner sc) {
+		System.out.println("Number of inputs: ");
+		int numInputs = sc.nextInt();
+		System.out.println("Number of outputs: ");
+		int numOutputs = sc.nextInt();
+		System.out.println("How many samples will be entered: ");
+		int numSamples = sc.nextInt();
+		Dataset ds = new SimpleDataset(numInputs, numOutputs);
+		List<Float> inputs;
+		List<Float> outputs;
+		for(int i = 0; i < numSamples; i++) {
+			System.out.println("--------Sample number " + i + ":");
+			inputs = new LinkedList<Float>();
+			outputs = new LinkedList<Float>();
+
+			for(int in = 0; in < numInputs; in++) {
+				System.out.println("Input number " + in + ":");
+				inputs.add(sc.nextFloat());
 			}
-			System.out.println("Training successful.");
-		} catch (NotOutputNeuronException | OutputNeuronException | NotHiddenLayerException | GuessAnswerSizeMismatchException e) {
+			System.out.println("Outputs: ");
+			for(int out = 0; out < numOutputs; out++) {
+				System.out.println("Output number " + out + ":");
+				outputs.add(sc.nextFloat());
+			}
+			try {
+				ds.addTrainingSample(new SimpleTrainingSample(inputs, outputs));
+			} catch (TrainingSampleSizeMismatchException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		System.out.println("Filename: ");
+		String file = sc.next();
+		DatasetLoaderSaver.saveDataset(file, ds);
+		
+		
+	}
+
+	private static void handleTrainFromDataset(Network n, Scanner sc) {
+		System.out.println("What file should the network be trained with?");
+		String file = sc.next();
+		Dataset ds = DatasetLoaderSaver.loadDataset(file);
+		try {
+			for(int i = 0; i < 100; i++)
+				n.getLearningMethod().apply(ds, n);
+		} catch (DatasetSizeDifferentFromNetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+	}
+	
+	private static void handleTrainFromDatasetReadable(Network n,Scanner sc) {
+		System.out.println("What file should the network be trained with?");
+		String file = sc.next();
+		Dataset ds = DatasetLoaderSaver.loadDatasetReadableFile(file);
+		try {
+			for(int i = 0; i < 100; i++)
+				n.getLearningMethod().apply(ds, n);
+		} catch (DatasetSizeDifferentFromNetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private static void handleSaveNet(Network n, Scanner sc) {
+		System.out.println("Name of the file to save to: ");
+		String file = sc.next();
+		if(NetworkLoaderSaver.saveNetwork(file, n))
+			System.out.println("Network successfully saved.");
+		else
+			System.out.println("Network load failed.");
+	}
+
+	private static Network handleLoad(Scanner sc) {
+		System.out.println("What is the name of the file?");
+		String file = sc.next();
+		return NetworkLoaderSaver.loadNetwork(file);
+		
 	}
 
 	private static Network makeNetwork(Scanner sc) {
@@ -154,7 +181,7 @@ public class Main {
 		System.out.println("How many neurons in output layer?");
 		numNeuronsPerLayer[numNeuronsPerLayer.length-1] = sc.nextInt();
 		try {
-			n = new Network(numNeuronsPerLayer);
+			n = new MultilayerFeedForwardNetwork(numNeuronsPerLayer, new Backpropagation(0.2f));
 			System.out.println("Network created successfully.");
 		} catch (NoInputConnectionsException e) {
 			// TODO Auto-generated catch block
@@ -198,8 +225,13 @@ public class Main {
 		System.out.println("M - Make network");
 		System.out.println("P - Predict on inputs");
 		System.out.println("S - Show Network Architecture");
-		System.out.println("T - Train net");
-		System.out.println("A - auto");
+		System.out.println("L - Load network");
+		System.out.println("ST - Store network");
+		System.out.println("MDS - Make Dataset");
+		System.out.println("TDS - Train on Dataset");
+		System.out.println("TDSR - Train on Dataset Readable");
 		System.out.println("Q - Quit");
 	}
+	
+	
 }

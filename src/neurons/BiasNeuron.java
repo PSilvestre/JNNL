@@ -1,4 +1,5 @@
 package neurons;
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,8 +12,12 @@ import exception.NotOutputNeuronException;
 import functions.ActivationFunction;
 import functions.SummingFunction;
 
-public class BiasNeuron implements Neuron{
+public class BiasNeuron implements Neuron, Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 21L;
 	private float value;
 	List<Connection> outputs;
 	
@@ -83,16 +88,6 @@ public class BiasNeuron implements Neuron{
 	}
 
 	@Override
-	public void backProp(float guess, float answer) throws NotOutputNeuronException {
-		throw new NotOutputNeuronException();
-	}
-
-	@Override
-	public void backProp() {
-		
-	}
-
-	@Override
 	public float getDelta() {
 		
 		System.out.println("THIS SHOULDNT HAVE BEEN CALLED");
@@ -100,9 +95,8 @@ public class BiasNeuron implements Neuron{
 	}
 
 	@Override
-	public void updateWeights(float learningRate) {
-		for(Connection c : outputs)
-			c.setWeight((float) (c.getWeight() + learningRate * this.value * c.getReceiverNeuron().getDelta()));
+	public void setDelta(float delta) {
+		//do nothing
 	}
 
 }

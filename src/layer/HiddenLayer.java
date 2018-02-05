@@ -1,5 +1,6 @@
 package layer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,14 +20,18 @@ import neurons.BiasNeuron;
 import neurons.ComputingNeuron;
 import neurons.Neuron;
 
-public class HiddenLayer implements Layer {
+public class HiddenLayer implements Layer,  Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 12L;
 	private List<Neuron> neurons;
 	private Neuron bias;
 	public HiddenLayer(int numberOfNeurons) {
 		neurons = new LinkedList<Neuron>();
 		for(int i = 0; i < numberOfNeurons; i++)
-			neurons.add(new ComputingNeuron(ActivationFunction.SIGMOID, SummingFunction.WEIGHTED));
+			neurons.add(new ComputingNeuron(ActivationFunction.TANH, SummingFunction.WEIGHTED));
 	bias = new BiasNeuron();
 	}
 	
@@ -71,24 +76,11 @@ public class HiddenLayer implements Layer {
 		return neurons;
 	}
 
-	@Override
-	public void backProp(List<Float> guesses, List<Float> answers) throws NotOutputNeuronException {
-		throw new NotOutputNeuronException();
-	}
+
 
 	@Override
-	public void backProp() throws OutputNeuronException, NotHiddenLayerException {
-		for(Neuron n : neurons)
-			n.backProp();
-		bias.backProp();
-		
-	}
-
-	@Override
-	public void updateWeights(float learningRate) {
-		for(Neuron n : neurons)
-			n.updateWeights(learningRate);
-		bias.updateWeights(learningRate);
+	public int size() {
+		return neurons.size();
 	}
 
 }

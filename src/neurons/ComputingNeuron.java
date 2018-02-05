@@ -1,4 +1,5 @@
 package neurons;
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,7 +10,11 @@ import exception.OutputNeuronException;
 import functions.ActivationFunction;
 import functions.SummingFunction;
 
-public class ComputingNeuron implements Neuron{
+public class ComputingNeuron implements Neuron, Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 22L;
 	private ActivationFunction af;
 	private SummingFunction sf;
 	
@@ -88,19 +93,7 @@ public class ComputingNeuron implements Neuron{
 		outputs.add(c);
 	}
 
-	@Override
-	public void backProp(float guess, float answer) throws NotOutputNeuronException {
-		this.setDelta(af.applyDeriv(this.sumOfInputs)* (answer - guess));
-	}
 
-	@Override
-	public void backProp() throws OutputNeuronException {
-		float sumOfWeightedDeltas = 0;
-		for(Connection c : outputs)
-			sumOfWeightedDeltas += c.getReceiverNeuron().getDelta()*c.getWeight();
-		this.setDelta(af.applyDeriv(sumOfInputs)*sumOfWeightedDeltas);
-		
-	}
 
 	public float getDelta() {
 		return delta;
@@ -108,12 +101,6 @@ public class ComputingNeuron implements Neuron{
 
 	public void setDelta(float delta) {
 		this.delta = delta;
-	}
-
-	@Override
-	public void updateWeights(float learningRate) {
-		for(Connection c : outputs)
-			c.setWeight((float) (c.getWeight() + learningRate * this.output * c.getReceiverNeuron().getDelta()));
 	}
 
 

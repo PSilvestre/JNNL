@@ -34,10 +34,6 @@ public interface Layer {
 	void connectTo(Layer layer) throws NoInputConnectionsException;
 
 	List<Neuron> getNeurons();
-	
-	void backProp(List<Float> guesses, List<Float> answers) throws NotOutputNeuronException;
 
-	void backProp() throws OutputNeuronException, NotHiddenLayerException;
-
-	void updateWeights(float learningRate) throws OutputNeuronException;
+	int size();
 }

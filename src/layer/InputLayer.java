@@ -1,4 +1,5 @@
 package layer;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,19 +12,24 @@ import exception.NotHiddenLayerException;
 import exception.NotOutputNeuronException;
 import exception.OutputNeuronException;
 import exception.WrongSizeInInputLayerException;
+import neurons.BiasNeuron;
 import neurons.InputNeuron;
 import neurons.Neuron;
 import neurons.SimpleInputNeuron;
 
-public class InputLayer implements Layer {
+public class InputLayer implements Layer, Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 10L;
 	private List<InputNeuron> neurons;
-	
+	private Neuron bias;
 	public InputLayer(int numNeurons) {
 		neurons = new LinkedList<InputNeuron>();
 		for(int i = 0; i < numNeurons; i++)
 			neurons.add(new SimpleInputNeuron());
-			
+		bias = new BiasNeuron();
 	}
 	
 	@Override
@@ -60,6 +66,12 @@ public class InputLayer implements Layer {
 				on.addInputConnection(c);
 			}
 		}
+		for(Neuron on : layer.getNeurons()) {
+			c = new NeuronConnection(bias, on);
+			bias.addOutputConnection(c);
+			on.addInputConnection(c);
+		}
+		
 	}
 
 	@Override
@@ -71,21 +83,8 @@ public class InputLayer implements Layer {
 	}
 
 	@Override
-	public void backProp(List<Float> guesses, List<Float> answers) throws NotOutputNeuronException {
-		throw new NotOutputNeuronException();
-	}
-
-	@Override
-	public void backProp() throws OutputNeuronException, NotHiddenLayerException {
-		for(Neuron n : neurons)
-			n.backProp();
-		
-	}
-
-	@Override
-	public void updateWeights(float learningRate) {
-		for(Neuron n : neurons)
-			n.updateWeights(learningRate);
+	public int size() {
+		return neurons.size();
 	}
 
 }

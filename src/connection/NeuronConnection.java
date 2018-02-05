@@ -1,8 +1,14 @@
 package connection;
+import java.io.Serializable;
+
 import neurons.Neuron;
 
-public class NeuronConnection implements Connection {
+public class NeuronConnection implements Connection, Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 40L;
 	Neuron source;
 	Neuron receiver;
 	float weight;
