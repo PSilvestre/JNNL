@@ -15,11 +15,17 @@ A simple Neural Network library I'm working on for fun.
   +Loading and storing networks from files.
   
   +Training from files.
+  
+  +dataset generation.
 
 
 <b>To-do:</b>
   
   +Visualization.
+  
+  +Documentation.
+
+  +Proper catching of exceptions.
   
   
   
