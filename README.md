@@ -1,6 +1,8 @@
 # JNNL
 Java Neural Network Library
-A simple Neural Network library I'm working on for fun. 
+
+An extremely simple, CLI neural network app, allows you to create, train and save 
+neural networks quickly through menu navigation.
 
 <b>Features:</b>
 
@@ -16,7 +18,7 @@ A simple Neural Network library I'm working on for fun.
   
   +Training from files.
   
-  +dataset generation.
+  +Dataset generation.
 
 
 <b>To-do:</b>
