@@ -2,8 +2,8 @@ package network;
 
 import java.util.List;
 
-import Learning.LearningMethod;
 import layer.Layer;
+import learning.LearningMethod;
 
 public interface Network {
 

@@ -4,8 +4,6 @@ import java.util.LinkedList;
 import java.io.Serializable;
 import java.util.List;
 
-import Learning.Backpropagation;
-import Learning.LearningMethod;
 import exception.GuessAnswerSizeMismatchException;
 import exception.NoInputConnectionsException;
 import exception.NoInputInInputLayerException;
@@ -18,6 +16,8 @@ import layer.HiddenLayer;
 import layer.InputLayer;
 import layer.Layer;
 import layer.OutputLayer;
+import learning.Backpropagation;
+import learning.LearningMethod;
 
 public class MultilayerFeedForwardNetwork implements Network, Serializable{
 

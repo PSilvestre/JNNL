@@ -1,17 +1,17 @@
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
-import Data.Dataset;
-import Data.DatasetLoaderSaver;
-import Data.SimpleDataset;
-import Data.SimpleTrainingSample;
-import Data.TrainingSample;
-import Learning.Backpropagation;
 import connection.Connection;
+import data.Dataset;
+import data.DatasetLoaderSaver;
+import data.SimpleDataset;
+import data.SimpleTrainingSample;
+import data.TrainingSample;
 import exception.DatasetSizeDifferentFromNetException;
 import exception.GuessAnswerSizeMismatchException;
 import exception.NoInputConnectionsException;
@@ -19,7 +19,9 @@ import exception.NotHiddenLayerException;
 import exception.NotOutputNeuronException;
 import exception.OutputNeuronException;
 import exception.TrainingSampleSizeMismatchException;
+import image.pgmImage;
 import layer.Layer;
+import learning.Backpropagation;
 import network.MultilayerFeedForwardNetwork;
 import network.Network;
 import network.NetworkLoaderSaver;
@@ -55,6 +57,9 @@ public class Main {
 			case "P":
 				handlePredict(n, sc);
 				break;
+			case "PI":
+				handlePredictOnPicture(n, sc);
+				break;
 			case "S":
 				showNetStructure(n);
 				break;
@@ -72,6 +77,9 @@ public class Main {
 				break;
 			case "MDS":
 				handleMakeDataset(sc);
+				break;
+			case "MIDS":
+				createImageDataset(sc);
 				break;
 			case "Q":
 				running = false;
@@ -129,7 +137,7 @@ public class Main {
 		String file = sc.next();
 		Dataset ds = DatasetLoaderSaver.loadDataset(file);
 		try {
-			for(int i = 0; i < 100; i++)
+			for(int i = 0; i < 2; i++)
 				n.getLearningMethod().apply(ds, n);
 		} catch (DatasetSizeDifferentFromNetException e) {
 			// TODO Auto-generated catch block
@@ -143,7 +151,7 @@ public class Main {
 		String file = sc.next();
 		Dataset ds = DatasetLoaderSaver.loadDatasetReadableFile(file);
 		try {
-			for(int i = 0; i < 100; i++)
+			for(int i = 0; i < 2; i++)
 				n.getLearningMethod().apply(ds, n);
 		} catch (DatasetSizeDifferentFromNetException e) {
 			// TODO Auto-generated catch block
@@ -220,14 +228,59 @@ public class Main {
 		}
 
 	}
+	
+	private static void handlePredictOnPicture(Network n, Scanner sc) {
+		System.out.println("Name of file: ");
+		String file = sc.next();
+		pgmImage img = new pgmImage(file);
+		List<Float> outs = n.compute(img.getData());
+		System.out.println("Outputs: ");
+		for (Float f : outs) {
+			System.out.println(f);
+		}
+	}
+	
+	private static void createImageDataset(Scanner sc) {
+		System.out.println("Common filename (Must be .pgm): ");
+		String filenames = sc.next();
+		System.out.println("Number of images: ");
+		int numImages = sc.nextInt();
+		System.out.println("Number of inputs(width*height):");
+		int numInputs = sc.nextInt();
+		System.out.println("Number of outputs?");
+		int numOutputs = sc.nextInt();
+		pgmImage img = null;
+		Dataset d = new SimpleDataset(numInputs, numOutputs);
+		List<Float> outputs =null;
+		for(int i  = 1; i < numImages+1; i++) {
+			outputs = new LinkedList<Float>();
+			img = new pgmImage(filenames + i + ".pgm");
+			for(int o = 0; o < numOutputs; o++) {
+				System.out.println("Image " + filenames + i + ".pgm, output " + o + ": ");
+				outputs.add(sc.nextFloat());
+			}
+			
+			try {
+				d.addTrainingSample(new SimpleTrainingSample(img.getData(), outputs));
+			} catch (TrainingSampleSizeMismatchException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		System.out.println("Done. What file should the dataset be stored as: ");
+		String dsfn = sc.next();
+		DatasetLoaderSaver.saveDataset(dsfn, d);
+	}
 
 	private static void printHelp() {
 		System.out.println("M - Make network");
-		System.out.println("P - Predict on inputs");
+		System.out.println("P - Predict ");
+		System.out.println("PI - Predict on image");
 		System.out.println("S - Show Network Architecture");
 		System.out.println("L - Load network");
 		System.out.println("ST - Store network");
 		System.out.println("MDS - Make Dataset");
+		System.out.println("MIDS - Make Image Dataset");
 		System.out.println("TDS - Train on Dataset");
 		System.out.println("TDSR - Train on Dataset Readable");
 		System.out.println("Q - Quit");
