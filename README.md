@@ -25,8 +25,6 @@ neural networks quickly through menu navigation.
   
   +Visualization.
   
-  +Documentation.
-
   +Proper catching of exceptions.
   
   
