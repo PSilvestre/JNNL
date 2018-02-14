@@ -1,5 +1,10 @@
 package functions;
 
+/**
+ * An enumerator for all activation functions. These are the functions a neuron applies after the summing function.
+ * @author Pedro Silvestre
+ *
+ */
 public enum ActivationFunction {
 	SIGMOID {
 		public float apply(float sumOfInputs) {
@@ -31,11 +36,22 @@ public enum ActivationFunction {
 			
 		}
 	};
+	
+	/**
+	 * Computes the result of this Activation function.
+	 * @param sumOfInputs the result of applying the summing function of a neuron.
+	 * @return the result.
+	 */
 	public float apply(float sumOfInputs) {
 		System.out.println("using default af");
 		return 0;
 	}
 
+	/**
+	 * Computes the result of the derivative of this Activation function.
+	 * @param value the value on which to compute the derivative.
+	 * @return the result.
+	 */
 	public float applyDeriv(float value) {
 		System.out.println("using default af");
 		return 0;
